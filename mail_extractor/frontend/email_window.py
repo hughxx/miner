@@ -186,20 +186,6 @@ class EmailWindow:
                 topic or ""
             ), tags=(email["entry_id"],))
 
-    def _on event):
-        """_tree_click(self,点击任意列都选中整行"""
-        # 获取点击的 item 和 region
-        region = self.tree.identify_region(event.x, event.y)
-        if region == "cell" or region == "row":
-            # 已经是选中状态则取消，否则选中
-            item = self.tree.identify_row(event.y)
-            if item:
-                current = self.tree.selection()
-                if item in current:
-                    self.tree.selection_remove(item)
-                else:
-                    self.tree.selection_add(item)
-
     def _on_tree_click(self, event):
         """点击任意列都选中整行"""
         region = self.tree.identify_region(event.x, event.y)
