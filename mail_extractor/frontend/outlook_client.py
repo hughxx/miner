@@ -55,23 +55,21 @@ class OutlookClient:
 
         try:
             items = folder.Items
-            print(f"[DEBUG] 邮件总数: {len(items)}")
-
-            # 先不过滤，看看有多少邮件
-            count = 0
-            for item in items:
-                count += 1
-                if count > 50:  # 只打印前50封的调试信息
-                    break
-                print(f"[DEBUG] Item Class: {item.Class}, Subject: {item.Subject[:30] if item.Subject else 'None'}")
 
             # 按时间倒序
             items.Sort("[ReceivedTime]", True)
 
+            # 限制最多处理1000封邮件，避免卡死
+            max_emails = 1000
+            count = 0
+
             for item in items:
+                if count >= max_emails:
+                    break
                 if item.Class != 43:  # 43 = IPM.Note (邮件)
                     continue
 
+                count += 1
                 received_time = item.ReceivedTime
                 email_data = {
                     "subject": item.Subject or "",
@@ -82,8 +80,9 @@ class OutlookClient:
                     "html_content": item.HTMLBody or ""
                 }
 
-                # 解析图片
-                email_data["images"] = self._extract_images(item)
+                # 解析图片（暂时禁用，避免卡死）
+                # email_data["images"] = self._extract_images(item)
+                email_data["images"] = []
 
                 # 日期筛选 - 统一转为naive datetime比较
                 if received_time:
