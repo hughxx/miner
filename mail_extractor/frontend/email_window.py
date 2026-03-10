@@ -57,7 +57,7 @@ class EmailWindow:
         list_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
         columns = ("select", "subject", "sender", "received_time", "conversation_topic")
-        self.tree = ttk.Treeview(list_frame, columns=columns, show="headings", height=15)
+        self.tree = ttk.Treeview(list_frame, columns=columns, show="headings", height=15, selectmode="extended")
 
         self.tree.heading("select", text="选择")
         self.tree.heading("subject", text="主题")
@@ -136,6 +136,10 @@ class EmailWindow:
 
             # 显示
             self._display_emails()
+
+            # 刷新后恢复窗口焦点
+            self.window.lift()
+            self.window.focus_force()
 
             messagebox.showinfo("成功", f"加载了 {len(self.emails)} 封邮件（去重后）")
 
