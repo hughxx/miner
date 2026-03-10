@@ -54,7 +54,9 @@ class EmailWindow:
 
         # 按钮
         tk.Button(filter_frame, text="刷新列表", command=self._load_emails).grid(row=3, column=0, pady=10)
-        tk.Button(filter_frame, text="提取选中", command=self._extract_selected).grid(row=3, column=1, pady=10)
+        tk.Button(filter_frame, text="全选", command=self._select_all).grid(row=3, column=1, pady=10, padx=5)
+        tk.Button(filter_frame, text="取消全选", command=self._deselect_all).grid(row=3, column=2, pady=10)
+        tk.Button(filter_frame, text="提取选中", command=self._extract_selected).grid(row=3, column=3, pady=10, padx=5)
 
         # 邮件列表
         list_frame = tk.Frame(self.window)
@@ -218,6 +220,18 @@ class EmailWindow:
                 self.tree.set(item, "select", "☑")
             else:
                 self.tree.set(item, "select", "☐")
+
+    def _select_all(self):
+        """全选"""
+        for item in self.tree.get_children():
+            self.tree.selection_add(item)
+            self.tree.set(item, "select", "☑")
+
+    def _deselect_all(self):
+        """取消全选"""
+        for item in self.tree.get_children():
+            self.tree.selection_remove(item)
+            self.tree.set(item, "select", "☐")
 
     def _extract_selected(self):
         """提取选中的邮件"""
