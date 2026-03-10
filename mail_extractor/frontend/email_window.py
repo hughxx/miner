@@ -82,6 +82,9 @@ class EmailWindow:
         self.tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
+        # 绑定点击任意列都能选中整行
+        self.tree.bind('<Button-1>', self._on_tree_click)
+
         # 绑定选择事件
         self.tree.bind('<<TreeviewSelect>>', self._on_tree_select)
 
@@ -181,10 +184,40 @@ class EmailWindow:
                 topic or ""
             ), tags=(email["entry_id"],))
 
+    def _on event):
+        """_tree_click(self,点击任意列都选中整行"""
+        # 获取点击的 item 和 region
+        region = self.tree.identify_region(event.x, event.y)
+        if region == "cell" or region == "row":
+            # 已经是选中状态则取消，否则选中
+            item = self.tree.identify_row(event.y)
+            if item:
+                current = self.tree.selection()
+                if item in current:
+                    self.tree.selection_remove(item)
+                else:
+                    self.tree.selection_add(item)
+
+    def _on_tree_click(self, event):
+        """点击任意列都选中整行"""
+        region = self.tree.identify_region(event.x, event.y)
+        if region == "cell" or region == "row":
+            item = self.tree.identify_row(event.y)
+            if item:
+                current = self.tree.selection()
+                if item in current:
+                    self.tree.selection_remove(item)
+                else:
+                    self.tree.selection_add(item)
+
     def _on_tree_select(self, event):
         """处理选择事件，更新复选框显示"""
-        # 这里可以添加选择后的逻辑
-        pass
+        # 更新选择复选框显示
+        for item in self.tree.get_children():
+            if item in self.tree.selection():
+                self.tree.set(item, "select", "☑")
+            else:
+                self.tree.set(item, "select", "☐")
 
     def _extract_selected(self):
         """提取选中的邮件"""
