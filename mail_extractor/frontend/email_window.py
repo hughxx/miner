@@ -12,6 +12,10 @@ class EmailWindow:
         self.window.title("邮件提取")
         self.window.geometry("1000x700")
 
+        # 设置为子窗口，不抢焦点但保持置顶
+        self.window.transient(parent)
+        self.window.grab_set()
+
         self.outlook_client = None
         self.api_client = APIClient()
 
@@ -137,11 +141,14 @@ class EmailWindow:
             # 显示
             self._display_emails()
 
-            # 刷新后恢复窗口焦点
-            self.window.lift()
-            self.window.focus_force()
+            # 先显示消息，再恢复窗口焦点
+            self.window.after(100, lambda: self.window.lift())
+            self.window.after(200, lambda: self.window.focus_force())
 
             messagebox.showinfo("成功", f"加载了 {len(self.emails)} 封邮件（去重后）")
+
+            # 消息框关闭后再确保窗口在最前
+            self.window.after(300, lambda: self.window.lift())
 
         except Exception as e:
             messagebox.showerror("错误", f"加载邮件失败: {e}")
