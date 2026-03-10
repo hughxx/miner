@@ -85,7 +85,12 @@ class OutlookClient:
                 # 解析图片
                 email_data["images"] = self._extract_images(item)
 
-                # 日期筛选
+                # 日期筛选 - 统一转为naive datetime比较
+                if received_time:
+                    # 如果是aware datetime，转为naive
+                    if received_time.tzinfo is not None:
+                        received_time = received_time.replace(tzinfo=None)
+
                 if start_date and received_time and received_time < start_date:
                     continue
                 if end_date and received_time and received_time > end_date:
@@ -156,6 +161,13 @@ class OutlookClient:
                 # 比较时间，保留最新的
                 current_time = email["received_time"]
                 existing_time = latest[topic]["received_time"]
+
+                # 转为naive datetime比较
+                if current_time and current_time.tzinfo is not None:
+                    current_time = current_time.replace(tzinfo=None)
+                if existing_time and existing_time.tzinfo is not None:
+                    existing_time = existing_time.replace(tzinfo=None)
+
                 if current_time and existing_time and current_time > existing_time:
                     latest[topic] = email
 
